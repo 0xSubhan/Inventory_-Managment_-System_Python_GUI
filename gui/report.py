@@ -3,5 +3,7 @@ from utility import clear_window
 
 def report_page(window):
     clear_window.clear_main(window)
-    label = tk.Label(window,text="Report")
-    label.pack()
+    label = tk.Label(window,text="Report",font=("Arial", 24, "bold"),bg="white",padx=20,pady=20)
+    label.grid(row=0,column=0)
+    # Tells the first column to expand horizontally.
+    window.grid_columnconfigure(0,weight=1)
