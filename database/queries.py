@@ -14,3 +14,4 @@ def insert_product(d_name,d_category,d_price,d_quantity):
         connection.commit()
         cursor.close()
         connection.close()
+

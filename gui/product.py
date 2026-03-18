@@ -73,7 +73,7 @@ def product_page(window):
         ("quantity", "Quantity"),
     ]
     entries = {}
-
+    # Didnt get the logic of This ??
     for row, (key, text) in enumerate(fields, start=1):
         tk.Label(form_card, text=text, bg="white", anchor="w").grid(row=row, column=0, sticky="w", pady=6)
         entry = tk.Entry(form_card, width=30)
