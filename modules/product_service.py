@@ -8,7 +8,7 @@ def find_product_by_name(name):
     connection = config.get_db_connection()
     if connection is None:
         print("Save product terminated")  # Test case
-        return
+        return False
 
     cursor = connection.cursor()
     product = get_product_by_name(cursor,name)
@@ -21,7 +21,7 @@ def add_product(name,category,price,quantity):
     connection = config.get_db_connection()
     if connection is None:
         print("Save product terminated")  # Test case
-        return
+        return {"ok":False,"code":"DB_ERROR","message":"Connection To DataBase Failed!"}
 
     cursor = connection.cursor()
     queries.insert_product(cursor,name,category,price,quantity)
@@ -30,6 +30,8 @@ def add_product(name,category,price,quantity):
     cursor.close()
     connection.commit()
     connection.close()
+
+    return {"ok": True, "code": "Success", "message": "Product Successfully Added!"}
 
 
 def save_product(entries):
@@ -45,12 +47,12 @@ def save_product(entries):
     for val in entries.values():
         if val.get().strip() == "":
             print("Some Field was left empty!") # Test Case
-            return
+            return {"ok":False,"code":"VALIDATION_ERROR","message":"Some Field was left empty!"}
 
     # Check if name is greater than 2 else exit
     if len(name) < 2:
         print("Too small name") # Test Case
-        return
+        return {"ok":False,"code":"VALIDATION_ERROR","message":"Name Length Is Too Small!"}
     # price and quantity must be float and int , and if user enters some other data then show error:
     try:
         price = float(price)
@@ -58,14 +60,14 @@ def save_product(entries):
     except:
         print("Price must be a number!") # Test Case
         print("Quantity must be a number") # Test Case
-        return
+        return {"ok":False,"code":"VALIDATION_ERROR","message":"Price or Quantity Must Be A Number!"}
 
     # Checking if product already exist , if yes then exit !
     exsisting = find_product_by_name(name) # Return true if product already exist !
     if exsisting:
         print("Product already exist") # Test Case
-        return
+        return {"ok":False,"code":"ALREADY_EXSISTS","message":"Product Already EXISTS!"} # There can be another scenario where db connection fails so we have to check it out!
 
     # Just add the product , becasue reaching here means all validation are done!
-    add_product(name,category,price,quantity)
+    return add_product(name,category,price,quantity)
 

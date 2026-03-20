@@ -1,13 +1,30 @@
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import messagebox, ttk
 from modules import product_service
 from utility import clear_window
+
+
 
 def clear_form(entries):
     # entries are passed in as dictionary !
 
     for val in entries.values(): # values() will return view to all the value from the dictionary!
         val.delete(0,tk.END)
+
+def handle_save(entries):
+    result = product_service.save_product(entries)
+
+    if result["ok"]:
+        messagebox.showinfo("Success",result["message"],default='ok')
+        clear_form(entries)
+    elif result["code"]  in ("VALIDATION_ERROR","DB_ERROR","ALREADY_EXSISTS"):
+        messagebox.showwarning("Warning",result["message"],default='ok')
+        clear_form(entries)
+    else:
+        messagebox.showerror("Error",result["message"],default='ok')
+        clear_form(entries)
+
 
 def product_page(window):
     clear_window.clear_main(window)
@@ -96,7 +113,7 @@ def product_page(window):
         fg="white",
         relief="flat",
         padx=14,
-        command=lambda: product_service.save_product(entries),
+        command=lambda: handle_save(entries),
     ).pack(side="left", padx=(0, 8))
 
     tk.Button(
