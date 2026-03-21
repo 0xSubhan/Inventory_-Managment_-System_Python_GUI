@@ -9,18 +9,54 @@ def clear_form(entries): # entries are passed in as dictionary !
     for val in entries.values(): # values() will return view to all the value from the dictionary!
         val.delete(0,tk.END)
 
-def handle_save(entries):
+def refresh_table(product_table):
+    # First Deleting Exsisting records:
+    for record in product_table.get_children():
+        product_table.delete(record)
+
+    products = product_service.fetch_products()
+    for product in products:
+        product_table.insert("","end",values=product)
+
+
+def handle_save(entries,product_table):
     result = product_service.save_product(entries)
 
     if result["ok"]:
         messagebox.showinfo("Success",result["message"],default='ok')
         clear_form(entries)
+        refresh_table(product_table)
     elif result["code"]  in ("VALIDATION_ERROR","DB_ERROR","ALREADY_EXSISTS"):
         messagebox.showwarning("Warning",result["message"],default='ok')
         clear_form(entries)
     else:
         messagebox.showerror("Error",result["message"],default='ok')
         clear_form(entries)
+
+def show_search_result(product_table,record):
+    # First Deleting Exsisting records:
+    empty_product_table(product_table)
+
+    product_table.insert("","end",values=record)
+
+def clear_search_field(search_entry_object):
+    search_entry_object.delete(0,tk.END)
+
+def empty_product_table(product_table):
+    for rows in product_table.get_children():
+        product_table.delete(rows)
+
+def handle_search(product_entry,product_table):
+    product = product_entry.get() # get the name as a string !
+    product_record = product_service.search_product(product)
+    if product_record:
+        print("Record Found") # later show in message box!
+        show_search_result(product_table,product_record)
+        clear_search_field(product_entry)
+    else:
+        # That means search returned None so we will empty the table with popup "no record" !
+        empty_product_table(product_table)
+        clear_search_field(product_entry)
 
 def product_page(window):
     clear_window.clear_main(window)
@@ -55,7 +91,7 @@ def product_page(window):
     search_label.grid(row=0, column=0, sticky="w", pady=(0, 8))
 
     search_entry = tk.Entry(search_card, font=("Helvetica", 11), width=40)
-    search_entry.grid(row=1, column=0, padx=(0, 10), sticky="ew")
+    search_entry.grid(row=1, column=0, padx=(0, 10), sticky="ew",ipady=5)
 
     search_btn = tk.Button(
         search_card,
@@ -64,7 +100,7 @@ def product_page(window):
         fg="white",
         relief="flat",
         padx=16,
-        command=lambda: handle_search(search_entry.get()),
+        command=lambda: handle_search(search_entry,product_table),
     )
     search_btn.grid(row=1, column=1, sticky="w")
     search_card.grid_columnconfigure(0, weight=1)
@@ -109,7 +145,7 @@ def product_page(window):
         fg="white",
         relief="flat",
         padx=14,
-        command=lambda: handle_save(entries),
+        command=lambda: handle_save(entries,product_table),
     ).pack(side="left", padx=(0, 8))
 
     tk.Button(
@@ -161,6 +197,4 @@ def product_page(window):
     product_table.pack(side="left", fill="both", expand=True)
     y_scroll.pack(side="right", fill="y")
 
-    products = product_service.fetch_products() # return list of tuples , each is a record
-    for product in products:
-        product_table.insert("","end",values=product)
+    refresh_table(product_table) # Initial Table view !

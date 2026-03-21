@@ -7,7 +7,7 @@ def get_product_by_name(cursor,name):
     WHERE name = %s        
     """,(name,))
 
-    return cursor.fetchone()
+    return cursor.fetchone() # returns None if no record !
 
 def insert_product(cursor,d_name,d_category,d_price,d_quantity):
 

@@ -44,6 +44,18 @@ def fetch_products():
         return
     return products
 
+def search_product(product_name):
+    connection = config.get_db_connection()
+    if connection is None:
+        print("Database connection failed !") # Test Case
+        return
+    cursor = connection.cursor()
+    product = queries.get_product_by_name(cursor,product_name)
+    if product is None:
+        print("Product Not Found!")
+        return # None
+
+    return product
 
 def save_product(entries): # Entries will be passed out as a dictionary !
     # Extract the dictionary data:
