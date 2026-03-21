@@ -3,7 +3,6 @@ from database import queries
 from database import config
 from database.queries import get_product_by_name
 
-
 def find_product_by_name(name):
     connection = config.get_db_connection()
     if connection is None:
@@ -26,17 +25,27 @@ def add_product(name,category,price,quantity):
     cursor = connection.cursor()
     queries.insert_product(cursor,name,category,price,quantity)
 
-
     cursor.close()
     connection.commit()
     connection.close()
 
     return {"ok": True, "code": "Success", "message": "Product Successfully Added!"}
 
+def fetch_products():
+    connection = config.get_db_connection()
+    if connection is None:
+        print("Db connection Failed") # Test Case , there is no need to show error, just leave the table empty!
+        return
 
-def save_product(entries):
+    cursor = connection.cursor()
+    products = queries.get_all_products(cursor) # if there is no products then this will return empty list () , otherwise records of products as a list of tuples !
+    if not products:
+        print("There is no product!") # Test Case !
+        return
+    return products
 
-    # Entries will be passed out as a dictionary !
+
+def save_product(entries): # Entries will be passed out as a dictionary !
     # Extract the dictionary data:
     name = entries['name'].get().strip()
     category = entries['category'].get().strip()
@@ -70,4 +79,3 @@ def save_product(entries):
 
     # Just add the product , becasue reaching here means all validation are done!
     return add_product(name,category,price,quantity)
-

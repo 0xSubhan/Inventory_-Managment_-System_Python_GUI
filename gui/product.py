@@ -4,10 +4,7 @@ from tkinter import messagebox, ttk
 from modules import product_service
 from utility import clear_window
 
-
-
-def clear_form(entries):
-    # entries are passed in as dictionary !
+def clear_form(entries): # entries are passed in as dictionary !
 
     for val in entries.values(): # values() will return view to all the value from the dictionary!
         val.delete(0,tk.END)
@@ -24,7 +21,6 @@ def handle_save(entries):
     else:
         messagebox.showerror("Error",result["message"],default='ok')
         clear_form(entries)
-
 
 def product_page(window):
     clear_window.clear_main(window)
@@ -128,6 +124,43 @@ def product_page(window):
 
     form_card.grid_columnconfigure(1, weight=1)
 
+    # Show table UI :
 
+    table_card = tk.Frame(body, bg="white", padx=16, pady=16, bd=1, relief="solid")
+    table_card.pack(side="left", fill="both", expand=True)
 
+    tk.Label(
+        table_card,
+        text="Products",
+        bg="white",
+        fg="#1f2a44",
+        font=("Helvetica", 12, "bold"),
+    ).pack(anchor="w", pady=(0, 10))
 
+    table_container = tk.Frame(table_card, bg="white")
+    table_container.pack(fill="both", expand=True)
+
+    columns = ("id","name", "category", "price", "quantity")
+    product_table = ttk.Treeview(table_container, columns=columns, show="headings")
+
+    product_table.heading("id", text="ID")
+    product_table.heading("name", text="Name")
+    product_table.heading("category", text="Category")
+    product_table.heading("price", text="Price")
+    product_table.heading("quantity", text="Quantity")
+
+    product_table.column("id", width=100, anchor="w")
+    product_table.column("name", width=180, anchor="w")
+    product_table.column("category", width=140, anchor="w")
+    product_table.column("price", width=100, anchor="center")
+    product_table.column("quantity", width=100, anchor="center")
+
+    y_scroll = ttk.Scrollbar(table_container, orient="vertical", command=product_table.yview)
+    product_table.configure(yscrollcommand=y_scroll.set)
+
+    product_table.pack(side="left", fill="both", expand=True)
+    y_scroll.pack(side="right", fill="y")
+
+    products = product_service.fetch_products() # return list of tuples , each is a record
+    for product in products:
+        product_table.insert("","end",values=product)
