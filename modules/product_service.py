@@ -59,8 +59,8 @@ def search_product(product_name):
 
 def save_product(entries): # Entries will be passed out as a dictionary !
     # Extract the dictionary data:
-    name = entries['name'].get().strip()
-    category = entries['category'].get().strip()
+    name = entries['name'].get().strip().lower()
+    category = entries['category'].get().strip().lower()
     price = entries['price'].get().strip()
     quantity = entries['quantity'].get().strip()
 

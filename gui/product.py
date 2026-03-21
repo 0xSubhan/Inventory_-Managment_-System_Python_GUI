@@ -11,8 +11,7 @@ def clear_form(entries): # entries are passed in as dictionary !
 
 def refresh_table(product_table):
     # First Deleting Exsisting records:
-    for record in product_table.get_children():
-        product_table.delete(record)
+    empty_product_table(product_table)
 
     products = product_service.fetch_products()
     for product in products:
@@ -36,7 +35,6 @@ def handle_save(entries,product_table):
 def show_search_result(product_table,record):
     # First Deleting Exsisting records:
     empty_product_table(product_table)
-
     product_table.insert("","end",values=record)
 
 def clear_search_field(search_entry_object):
@@ -47,7 +45,7 @@ def empty_product_table(product_table):
         product_table.delete(rows)
 
 def handle_search(product_entry,product_table):
-    product = product_entry.get() # get the name as a string !
+    product = product_entry.get().strip().lower() # get the name as a string !
     product_record = product_service.search_product(product)
     if product_record:
         print("Record Found") # later show in message box!
@@ -55,8 +53,8 @@ def handle_search(product_entry,product_table):
         clear_search_field(product_entry)
     else:
         # That means search returned None so we will empty the table with popup "no record" !
-        empty_product_table(product_table)
-        clear_search_field(product_entry)
+        messagebox.showwarning("Search","No Record Found !")
+        refresh_table(product_table)
 
 def product_page(window):
     clear_window.clear_main(window)
