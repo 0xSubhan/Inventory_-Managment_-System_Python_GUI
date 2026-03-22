@@ -72,7 +72,7 @@ def save_product(entries): # Entries will be passed out as a dictionary !
 
     # Check if name is greater than 2 else exit
     if len(name) < 2:
-        print("Too small name") # Test Case
+        print("Too small name") # Test Case !
         return {"ok":False,"code":"VALIDATION_ERROR","message":"Name Length Is Too Small!"}
     # price and quantity must be float and int , and if user enters some other data then show error:
     try:
