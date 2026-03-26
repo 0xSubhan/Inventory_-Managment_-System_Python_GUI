@@ -44,6 +44,7 @@ def empty_product_table(product_table):
     for rows in product_table.get_children():
         product_table.delete(rows)
 
+
 def handle_search(product_entry,product_table):
     product = product_entry.get().strip().lower() # get the name as a string !
     product_record = product_service.search_product(product)
@@ -55,7 +56,7 @@ def handle_search(product_entry,product_table):
         # That means search returned None so we will empty the table with popup "no record" !
         messagebox.showwarning("Search","No Record Found !")
         refresh_table(product_table)
-
+########################################################################################################################
 def product_page(window):
     clear_window.clear_main(window)
     window.configure(bg="#f4f6fb")
@@ -102,6 +103,18 @@ def product_page(window):
     )
     search_btn.grid(row=1, column=1, sticky="w")
     search_card.grid_columnconfigure(0, weight=1)
+
+    refresh_btn = tk.Button(
+        search_card,
+        text="Refresh Table",
+        bg="#2f6fed",
+        fg="white",
+        relief="flat",
+        padx=16,
+        command=lambda: refresh_table(product_table),
+    )
+    refresh_btn.grid(row=1, column=2, sticky="w")
+    refresh_btn.grid_columnconfigure(0, weight=1)
 
     body = tk.Frame(content, bg="#f4f6fb")
     body.pack(fill="both", expand=True)
@@ -174,7 +187,7 @@ def product_page(window):
     table_container = tk.Frame(table_card, bg="white")
     table_container.pack(fill="both", expand=True)
 
-    columns = ("id","name", "category", "price", "quantity")
+    columns = ("id","name", "category", "price", "quantity","status")
     product_table = ttk.Treeview(table_container, columns=columns, show="headings")
 
     product_table.heading("id", text="ID")
@@ -182,12 +195,16 @@ def product_page(window):
     product_table.heading("category", text="Category")
     product_table.heading("price", text="Price")
     product_table.heading("quantity", text="Quantity")
+    product_table.heading("status", text="Status")
+
 
     product_table.column("id", width=100, anchor="w")
     product_table.column("name", width=180, anchor="w")
     product_table.column("category", width=140, anchor="w")
     product_table.column("price", width=100, anchor="center")
     product_table.column("quantity", width=100, anchor="center")
+    product_table.column("status", width=100, anchor="center")
+
 
     y_scroll = ttk.Scrollbar(table_container, orient="vertical", command=product_table.yview)
     product_table.configure(yscrollcommand=y_scroll.set)
