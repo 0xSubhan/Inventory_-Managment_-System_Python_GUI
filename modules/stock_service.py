@@ -43,13 +43,27 @@ def fetch_productID(product_Name):
 
 def upgrade_stock(entries):
     product_name = entries['name'].get().strip().lower()
-    quantity = int(entries['stock'].get().strip())
+    quantity = entries['stock'].get().strip()
     product_id = fetch_productID(product_name) # it returns tuple with only id
+    # Validation Check: If product doesnt exist !
+    if product_id is None:
+        print("Product does'nt exist!")
+        return {"ok":False,"code":"VALIDATION_ERROR","message":"Product Does't exist!"}
+
+
     product_id = product_id[0] # so we extract the value from the tuple
 
-    if quantity < 0:
+    # Quantity must be a number, Positive Number , Not Decimal!
+    try:
+        quantity = int(quantity)
+    except:
+        print("This mean user entered value other than int")
+        return {"ok":False,"code":"VALIDATION_ERROR","message":"Quantity must be a number!"}
+    # Validation Check : Quantity should be greater than 0 !
+    if quantity <= 0:
         print("Quantity is less than 0") # Test Case
-        return
+        return {"ok":False,"code":"VALIDATION_ERROR","message":"Quantity must be greater than 0!"}
+
 
     # For product to restock , the product should exist !
     product_record = product_service.find_product_by_name(product_name) # Return true if product exist else return None

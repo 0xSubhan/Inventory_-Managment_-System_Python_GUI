@@ -10,6 +10,11 @@ def handle_stock_upgrade(entries,stock_table):
     if result['ok']:
         messagebox.showinfo("Success",result["message"],default='ok')
         product.refresh_table(stock_table)
+        product.clear_form(entries)
+    elif result['code'] == "VALIDATION_ERROR":
+        messagebox.showwarning("Warning",result["message"],default='ok')
+        product.clear_form(entries)
+
 
 
 def stock_page(window):
