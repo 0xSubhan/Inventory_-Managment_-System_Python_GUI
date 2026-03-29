@@ -15,8 +15,6 @@ def handle_stock_upgrade(entries,stock_table):
         messagebox.showwarning("Warning",result["message"],default='ok')
         product.clear_form(entries)
 
-
-
 def stock_page(window):
     clear_window.clear_main(window)
     window.configure(bg="#f4f6fb")
@@ -104,7 +102,6 @@ def stock_page(window):
         entry.grid(row=row, column=1, pady=6, padx=(10, 0), sticky="ew")
         entries[key] = entry
 
-
     button_row = tk.Frame(form_card, bg="white")
     button_row.grid(row=len(fields) + 1, column=0, columnspan=2, pady=(14, 0), sticky="w")
 
@@ -131,7 +128,6 @@ def stock_page(window):
     form_card.grid_columnconfigure(1, weight=1)
 
     # Show table UI :
-
     table_card = tk.Frame(body, bg="white", padx=16, pady=16, bd=1, relief="solid")
     table_card.pack(side="left", fill="both", expand=True)
 
@@ -156,14 +152,12 @@ def stock_page(window):
     stock_table.heading("stock", text="Quantity")
     stock_table.heading("added_at", text="Added_at")
 
-
     stock_table.column("id", width=100, anchor="w")
     stock_table.column("name", width=180, anchor="w")
     stock_table.column("category", width=140, anchor="w")
     stock_table.column("price", width=100, anchor="center")
     stock_table.column("stock", width=100, anchor="center")
     stock_table.column("added_at", width=100, anchor="center")
-
 
     y_scroll = ttk.Scrollbar(table_container, orient="vertical", command=stock_table.yview)
     stock_table.configure(yscrollcommand=y_scroll.set)
