@@ -33,6 +33,41 @@ def fetch_productID(product_Name):
 
     return result
 
+def handle_fetch_products():
+    connection = config.get_db_connection()
+    if connection is None:
+        return
+    cursor = connection.cursor()
+
+    products = queries.get_all_products(cursor)
+    return products # Empty list if no record otherwise list of tuples
+
+def fetch_products_with_stocklvl(threshold=10):
+    products = handle_fetch_products()
+    if not products:
+        print("No records found")
+        return
+
+    products_with_stock_lvl = []
+
+    # Now we have list of tuples where each tuple represent a record !
+    for product in products:
+        productid , name , category , price , quantity , _ = product
+        stock_lvl = "HIGH" if quantity >= threshold else "LOW"
+        products_with_stock_lvl.append((productid,name,category,price,quantity,stock_lvl))
+
+    return products_with_stock_lvl
+
+def fetch_product(product_name):
+    connection = config.get_db_connection()
+    if connection is None:
+        return
+    cursor = connection.cursor()
+    product = queries.get_product_by_name(cursor,product_name) # Return None if no record is found !
+
+    return product
+
+
 def upgrade_stock(entries):
     product_name = entries['name'].get().strip().lower()
     quantity = entries['stock'].get().strip()

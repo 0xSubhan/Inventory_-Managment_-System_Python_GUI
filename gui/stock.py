@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
+
+from gui.product import clear_search_field
 from utility import clear_window
 from gui import product
 from modules import stock_service
@@ -9,11 +11,48 @@ def handle_stock_upgrade(entries,stock_table):
 
     if result['ok']:
         messagebox.showinfo("Success",result["message"],default='ok')
-        product.refresh_table(stock_table)
+        refresh_stock_table(stock_table)
         product.clear_form(entries)
     elif result['code'] == "VALIDATION_ERROR":
         messagebox.showwarning("Warning",result["message"],default='ok')
         product.clear_form(entries)
+
+def empty_stock_table(stock_table):
+    for row in stock_table.get_children():
+        stock_table.delete(row)
+
+
+def refresh_stock_table(stock_table):
+    empty_stock_table(stock_table)
+
+    products = stock_service.fetch_products_with_stocklvl(threshold=10)
+
+    for product in products:
+        print(product)
+        stock_table.insert("","end",values=product)
+
+def show_stock_search_result(product_record,stock_table,threshold):
+    empty_stock_table(stock_table)
+
+
+    productid, name, category, price, quantity, _ = product_record
+    stock_lvl = "HIGH" if quantity >= threshold else "LOW"
+
+    stock_table.insert("","end",values=(productid,name,category,price,quantity,stock_lvl))
+
+
+def handle_stock_search(entry_obj,stock_table,threshold=10):
+    product_name = entry_obj.get().strip().lower()
+    product_record = stock_service.fetch_product(product_name)
+    print(product_record)
+    if product_record:
+        show_stock_search_result(product_record,stock_table,threshold)
+        clear_search_field(entry_obj)
+    else:
+        messagebox.showwarning("Search","No Record Found")
+        clear_search_field(entry_obj)
+        refresh_stock_table(stock_table)
+
 
 def stock_page(window):
     clear_window.clear_main(window)
@@ -57,7 +96,7 @@ def stock_page(window):
         fg="white",
         relief="flat",
         padx=16,
-        command=lambda: product.handle_search(search_entry,stock_table),
+        command=lambda: handle_stock_search(search_entry,stock_table),
     )
     search_btn.grid(row=1, column=1, sticky="w")
     search_card.grid_columnconfigure(0, weight=1)
@@ -69,7 +108,7 @@ def stock_page(window):
         fg="white",
         relief="flat",
         padx=16,
-        command=lambda: product.refresh_table(stock_table),
+        command=lambda: refresh_stock_table(stock_table),
     )
     refresh_btn.grid(row=1, column=2, sticky="w")
     refresh_btn.grid_columnconfigure(0, weight=1)
@@ -142,22 +181,22 @@ def stock_page(window):
     table_container = tk.Frame(table_card, bg="white")
     table_container.pack(fill="both", expand=True)
 
-    columns = ("id","name", "category", "price", "stock","added_at")
+    columns = ("id","name", "category", "price", "stock","stocklvl")
     stock_table = ttk.Treeview(table_container, columns=columns, show="headings")
 
     stock_table.heading("id", text="ID")
     stock_table.heading("name", text="Name")
     stock_table.heading("category", text="Category")
     stock_table.heading("price", text="Price")
-    stock_table.heading("stock", text="Quantity")
-    stock_table.heading("added_at", text="Added_at")
+    stock_table.heading("stock", text="Stock")
+    stock_table.heading("stocklvl", text="Stock Level")
 
     stock_table.column("id", width=100, anchor="w")
     stock_table.column("name", width=180, anchor="w")
     stock_table.column("category", width=140, anchor="w")
     stock_table.column("price", width=100, anchor="center")
     stock_table.column("stock", width=100, anchor="center")
-    stock_table.column("added_at", width=100, anchor="center")
+    stock_table.column("stocklvl", width=100, anchor="center")
 
     y_scroll = ttk.Scrollbar(table_container, orient="vertical", command=stock_table.yview)
     stock_table.configure(yscrollcommand=y_scroll.set)
@@ -165,4 +204,4 @@ def stock_page(window):
     stock_table.pack(side="left", fill="both", expand=True)
     y_scroll.pack(side="right", fill="y")
 
-    product.refresh_table(stock_table) # Initial Table view !
+    refresh_stock_table(stock_table) # Initial Table View !
