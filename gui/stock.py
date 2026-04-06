@@ -121,7 +121,7 @@ def stock_page(window):
 
     form_title = tk.Label(
         form_card,
-        text="Add / Update Product",
+        text="Update Stocks",
         bg="white",
         fg="#1f2a44",
         font=("Helvetica", 12, "bold"),

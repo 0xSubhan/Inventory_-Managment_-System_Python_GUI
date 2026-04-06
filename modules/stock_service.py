@@ -49,7 +49,6 @@ def fetch_products_with_stocklvl(threshold=10):
         return
 
     products_with_stock_lvl = []
-
     # Now we have list of tuples where each tuple represent a record !
     for product in products:
         productid , name , category , price , quantity , _ = product
@@ -67,7 +66,6 @@ def fetch_product(product_name):
 
     return product
 
-
 def upgrade_stock(entries):
     product_name = entries['name'].get().strip().lower()
     quantity = entries['stock'].get().strip()
@@ -78,7 +76,6 @@ def upgrade_stock(entries):
         return {"ok":False,"code":"VALIDATION_ERROR","message":"Product Does't exist!"}
 
     product_id = product_id[0] # so we extract the value from the tuple
-
     # Quantity must be a number, Positive Number , Not Decimal!
     try:
         quantity = int(quantity)
