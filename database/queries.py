@@ -41,3 +41,48 @@ def increase_quantity(cursor,d_quantity,d_product_id):
     SET quantity = quantity + %s
     WHERE productid = %s    
     """,(d_quantity,d_product_id))
+
+def get_product_price(cursor,productName):
+    cursor.execute("""
+    SELECT price FROM product
+        WHERE name = %s
+    """,(productName,))
+
+    return cursor.fetchone() # Return None if no record is found!
+
+def get_product_quantity(cursor,productid):
+    cursor.execute("""
+    SELECT quantity FROM product
+        WHERE productid = %s
+    """,(productid,))
+
+    return cursor.fetchone()
+
+def decrease_quantity(cursor,quantity,productID):
+    cursor.execute("""
+    UPDATE product
+    SET quantity = quantity - %s
+        WHERE productid = %s
+    """,(quantity,productID))
+
+def insert_sale_transaction(cursor,productID,productQuantity,productPrice,sell_total):
+    cursor.execute("""
+    INSERT INTO sales 
+        (productid,quantity,sale_price,total_price)
+        VALUES (%s,%s,%s,%s)
+    """,(productID,productQuantity,productPrice,sell_total))
+
+def get_all_transactions(cursor):
+    cursor.execute("""
+    SELECT * FROM sales
+        ORDER BY sale_id ASC 
+    """)
+
+    return cursor.fetchall()
+
+def get_productname_by_id(cursor,productID):
+    cursor.execute("""
+    SELECT name FROM product
+        WHERE productid = %s
+    """,(productID,))
+    return cursor.fetchone()

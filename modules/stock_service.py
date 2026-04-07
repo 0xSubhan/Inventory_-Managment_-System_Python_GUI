@@ -2,16 +2,19 @@ import tkinter as tk
 from database import queries , config
 from modules import product_service
 
-def restock(productID,stock_quantity,movement_type): # This function maybe can be used in sales too ???
+def apply_stock_change(productID,quantity,movement_type): # This function maybe can be used in sales too ???
     # first fill the movement table by query
     connection = config.get_db_connection()
     if connection is None:
         print("DB CONNECTION FAIILED")
         return
     cursor = connection.cursor()
-    queries.insert_movement(cursor,productID,stock_quantity,movement_type)
+    queries.insert_movement(cursor,productID,quantity,movement_type)
     # Change the product table quantity
-    queries.increase_quantity(cursor,stock_quantity,productID)
+    if movement_type == "IN":
+        queries.increase_quantity(cursor,quantity,productID)
+    elif movement_type == "OUT":
+        queries.decrease_quantity(cursor,quantity,productID)
     # Close the db here !
     cursor.close()
     connection.commit()
@@ -93,4 +96,4 @@ def upgrade_stock(entries):
         print("Record Doesnt exist so cant restock") # Test Case
         return
     # Restock
-    return restock(product_id,quantity,"IN")
+    return apply_stock_change(product_id,quantity,"IN")
