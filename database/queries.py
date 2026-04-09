@@ -72,13 +72,6 @@ def insert_sale_transaction(cursor,productID,productQuantity,productPrice,sell_t
         VALUES (%s,%s,%s,%s)
     """,(productID,productQuantity,productPrice,sell_total))
 
-def get_all_transactions(cursor):
-    cursor.execute("""
-    SELECT * FROM sales
-        ORDER BY sale_id ASC 
-    """)
-
-    return cursor.fetchall()
 
 def get_productname_by_id(cursor,productID):
     cursor.execute("""
@@ -86,6 +79,14 @@ def get_productname_by_id(cursor,productID):
         WHERE productid = %s
     """,(productID,))
     return cursor.fetchone()
+
+def get_all_transactions(cursor):
+    cursor.execute("""
+    SELECT * FROM sales
+        ORDER BY sale_id ASC 
+    """)
+
+    return cursor.fetchall()
 
 def get_all_transactions_in_order(cursor):
     cursor.execute("""
