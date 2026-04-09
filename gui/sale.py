@@ -1,10 +1,8 @@
 import tkinter as tk
 from pydoc import text
 from tkinter import messagebox, ttk
-
-from tkinter import ttk
+from tkinter import ttk 
 from modules import sale_service
-
 from utility import clear_window
 
 def clear_sale_fields(productField,quantityField):
@@ -23,7 +21,6 @@ def update_sale_table(sales_table):
         sales_table.insert("","end",values=transaction)
 
 def handle_calculate_total(price_label,product_entry,quantity_entry):
-
     product_name = product_entry.get().strip().lower()
     product_quantity = quantity_entry.get().strip()
 

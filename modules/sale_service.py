@@ -31,13 +31,13 @@ def handle_fetch_transactions():
     if connection is None:
         return
     cursor = connection.cursor()
-    transactions = queries.get_all_transactions(cursor)
+    transactions = queries.get_all_transactions_in_order(cursor)
     return transactions
 
 # def fetch_product_name(productID):
 #     connection = config.get_db_connection()
 #     if connection is None:
-#         return
+#         returnhandle_fetch_transactions
 #     cursor = connection.cursor()
 #     productName = queries.get_productname_by_id(cursor,productID)
 #     return
@@ -47,15 +47,8 @@ def fetch_all_transactions():
     if not transactions:
         print("No transactions record found")
         return
-    # Now we need these list of tuples of transactions in a certain order !
-    updated_transactions = []
 
-    for transaction in transactions:
-        saleid , productid , quantity , sale_price , total_price , sale_date = transaction
-
-        updated_transactions.append((saleid,sale_date,productid,quantity,sale_price,total_price))
-
-    return updated_transactions
+    return transactions
 
 def sell_stock(productName,productQuantity):
     # DB connection
@@ -89,7 +82,6 @@ def sell_stock(productName,productQuantity):
     if sell_total > product_total:
         return {"ok": False, "message": "Not Enough Stock"}
 
-
     stock_service.apply_stock_change(productID,productQuantity,"OUT")
     queries.insert_sale_transaction(cursor,productID,productQuantity,productPrice,sell_total)
 
@@ -97,6 +89,4 @@ def sell_stock(productName,productQuantity):
     connection.commit()
     connection.close()
 
-
     return {"ok": True, "message": "Transaction Successfull!"}
-

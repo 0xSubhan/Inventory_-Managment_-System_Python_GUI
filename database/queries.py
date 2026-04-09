@@ -86,3 +86,18 @@ def get_productname_by_id(cursor,productID):
         WHERE productid = %s
     """,(productID,))
     return cursor.fetchone()
+
+def get_all_transactions_in_order(cursor):
+    cursor.execute("""
+    SELECT 
+        s.sale_id,
+        s.sale_date,
+        p.name,
+        s.quantity,
+        s.sale_price,
+        s.total_price
+    FROM sales s
+    JOIN product p ON p.productid = s.productid
+    ORDER BY s.sale_id ASC    
+    """)
+    return cursor.fetchall()
