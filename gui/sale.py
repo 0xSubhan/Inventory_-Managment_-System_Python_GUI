@@ -39,6 +39,7 @@ def handle_sell_stock(sales_table,product_entry,quantity_entry):
     if result["ok"]:
         # update table later
         messagebox.showinfo("Success",result["message"])
+        clear_sale_fields(product_entry,quantity_entry)
         update_sale_table(sales_table)
     else:
         messagebox.showwarning("Warning",result["message"])
