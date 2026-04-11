@@ -102,3 +102,44 @@ def get_all_transactions_in_order(cursor):
     ORDER BY s.sale_id ASC    
     """)
     return cursor.fetchall()
+
+def get_number_of_products(cursor):
+    cursor.execute("""
+    SELECT COUNT(*) FROM product 
+    """)
+    return cursor.fetchone() # Returns tuple
+
+def get_total_stocks(cursor):
+    cursor.execute("""
+    SELECT SUM(quantity) FROM product
+    """)
+    return cursor.fetchone()
+
+def get_low_stock_count(cursor,threshold=10):
+    cursor.execute("""
+    SELECT COUNT(*) FROM product WHERE COALESCE(quantity,0) < %s
+    """,(threshold,))
+
+    return cursor.fetchone()
+
+def get_total_revenue(cursor):
+    cursor.execute("""
+    SELECT SUM(total_price) FROM sales
+    """)
+
+    return cursor.fetchone()
+
+def get_recent_sales(cursor):
+    cursor.execute("""
+    SELECT 
+        s.sale_date,
+        p.name,
+        s.quantity,
+        s.total_price
+    FROM sales s
+    JOIN product p ON p.productid = s.productid
+    ORDER BY sale_date DESC 
+    LIMIT %s    
+    """,(5,))
+
+    return cursor.fetchall()
