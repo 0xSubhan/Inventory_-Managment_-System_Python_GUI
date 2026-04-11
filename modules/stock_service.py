@@ -1,4 +1,3 @@
-import tkinter as tk
 from database import queries , config
 from modules import product_service
 
@@ -9,18 +8,19 @@ def apply_stock_change(productID,quantity,movement_type): # This function maybe 
         print("DB CONNECTION FAIILED")
         return
     cursor = connection.cursor()
-    queries.insert_movement(cursor,productID,quantity,movement_type)
-    # Change the product table quantity
-    if movement_type == "IN":
-        queries.increase_quantity(cursor,quantity,productID)
-    elif movement_type == "OUT":
-        queries.decrease_quantity(cursor,quantity,productID)
-    # Close the db here !
-    cursor.close()
-    connection.commit()
-    connection.close()
-
-    return {"ok":True,"code":"Success","message":"Stock Updated!"}
+    try:
+        queries.insert_movement(cursor,productID,quantity,movement_type)
+        # Change the product table quantity
+        if movement_type == "IN":
+            queries.increase_quantity(cursor,quantity,productID)
+        elif movement_type == "OUT":
+            queries.decrease_quantity(cursor,quantity,productID)
+        # Close the db here !
+        connection.commit()
+        return {"ok":True,"code":"Success","message":"Stock Updated!"}
+    finally:
+        cursor.close()
+        connection.close()
 
 def fetch_productID(product_Name):
     connection = config.get_db_connection()
@@ -28,28 +28,31 @@ def fetch_productID(product_Name):
         print("Db connection failed") # Test Case
         return
     cursor = connection.cursor()
+    try:
+        result = queries.get_productID_by_productName(cursor,product_Name)
+        return result
+    finally:
+        cursor.close()
+        connection.close()
 
-    result = queries.get_productID_by_productName(cursor,product_Name)
-    cursor.close()
-    connection.commit()
-    connection.close()
-
-    return result
-
-def handle_fetch_products():
+def handle_fetch_products() -> list:
     connection = config.get_db_connection()
     if connection is None:
-        return
+        return []
     cursor = connection.cursor()
+    try:
+        products = queries.get_all_products(cursor)
+        return products # Empty list if no record otherwise list of tuples
+    finally:
+        cursor.close()
+        connection.close()
 
-    products = queries.get_all_products(cursor)
-    return products # Empty list if no record otherwise list of tuples
-
-def fetch_products_with_stocklvl(threshold=10):
+def fetch_products_with_stocklvl(threshold=10) -> list:
     products = handle_fetch_products()
-    if not products:
-        print("No records found")
-        return
+    if products is None:
+        return []
+    if len(products) == 0:
+        return []
 
     products_with_stock_lvl = []
     # Now we have list of tuples where each tuple represent a record !
@@ -65,9 +68,12 @@ def fetch_product(product_name):
     if connection is None:
         return
     cursor = connection.cursor()
-    product = queries.get_product_by_name(cursor,product_name) # Return None if no record is found !
-
-    return product
+    try:
+        product = queries.get_product_by_name(cursor,product_name) # Return None if no record is found !
+        return product
+    finally:
+        cursor.close()
+        connection.close()
 
 def upgrade_stock(entries):
     product_name = entries['name'].get().strip().lower()

@@ -1,4 +1,3 @@
-import tkinter as tk
 from database import queries
 from database import config
 from database.queries import get_product_by_name
@@ -10,11 +9,12 @@ def find_product_by_name(name):
         return False
 
     cursor = connection.cursor()
-    product = get_product_by_name(cursor,name)
-
-    cursor.close()
-    connection.close()
-    return product
+    try:
+        product = get_product_by_name(cursor,name)
+        return product
+    finally:
+        cursor.close()
+        connection.close()
 
 def add_product(name,category,price,quantity):
     connection = config.get_db_connection()
@@ -23,13 +23,13 @@ def add_product(name,category,price,quantity):
         return {"ok":False,"code":"DB_ERROR","message":"Connection To DataBase Failed!"}
 
     cursor = connection.cursor()
-    queries.insert_product(cursor,name,category,price,quantity)
-
-    cursor.close()
-    connection.commit()
-    connection.close()
-
-    return {"ok": True, "code": "Success", "message": "Product Successfully Added!"}
+    try:
+        queries.insert_product(cursor,name,category,price,quantity)
+        connection.commit()
+        return {"ok": True, "code": "Success", "message": "Product Successfully Added!"}
+    finally:
+        cursor.close()
+        connection.close()
 
 def fetch_products():
     connection = config.get_db_connection()
@@ -38,11 +38,15 @@ def fetch_products():
         return
 
     cursor = connection.cursor()
-    products = queries.get_all_products(cursor) # if there is no products then this will return empty list () , otherwise records of products as a list of tuples !
-    if not products:
-        print("There is no product!") # Test Case !
-        return
-    return products
+    try:
+        products = queries.get_all_products(cursor) # if there is no products then this will return empty list () , otherwise records of products as a list of tuples !
+        if not products:
+            print("There is no product!") # Test Case !
+            return
+        return products
+    finally:
+        cursor.close()
+        connection.close()
 
 def search_product(product_name):
     connection = config.get_db_connection()
@@ -50,12 +54,16 @@ def search_product(product_name):
         print("Database connection failed !") # Test Case
         return
     cursor = connection.cursor()
-    product = queries.get_product_by_name(cursor,product_name)
-    if product is None:
-        print("Product Not Found!")
-        return # None
+    try:
+        product = queries.get_product_by_name(cursor,product_name)
+        if product is None:
+            print("Product Not Found!")
+            return # None
 
-    return product
+        return product
+    finally:
+        cursor.close()
+        connection.close()
 
 def save_product(entries): # Entries will be passed out as a dictionary !
     # Extract the dictionary data:

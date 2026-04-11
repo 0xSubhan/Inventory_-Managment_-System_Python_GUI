@@ -1,7 +1,5 @@
 import tkinter as tk
-from pydoc import text
 from tkinter import messagebox, ttk
-from tkinter import ttk 
 from modules import sale_service
 from utility import clear_window
 
@@ -17,8 +15,13 @@ def update_sale_table(sales_table):
     empty_sales_table(sales_table)
 
     transactions = sale_service.fetch_all_transactions()
-    for transaction in transactions:
-        sales_table.insert("","end",values=transaction)
+
+    if transactions["ok"]:
+        for transaction in transactions["result"]:
+            sales_table.insert("","end",values=transaction)
+    else:
+        return print("No sales record !")
+
 
 def handle_calculate_total(price_label,product_entry,quantity_entry):
     product_name = product_entry.get().strip().lower()
@@ -50,10 +53,13 @@ def sale_page(window):
     clear_window.clear_main(window)
     window.configure(bg="#f4f6fb")
 
-    window.grid_columnconfigure(0, weight=1)
-    window.grid_rowconfigure(0, weight=1)
+    page = tk.Frame(window, bg="#f4f6fb", padx=24, pady=20)
+    page.pack(fill="both", expand=True)
 
-    content = tk.Frame(window, bg="#f4f6fb", padx=24, pady=20)
+    page.grid_columnconfigure(0, weight=1)
+    page.grid_rowconfigure(0, weight=1)
+
+    content = tk.Frame(page, bg="#f4f6fb")
     content.grid(row=0, column=0, sticky="nsew")
     content.grid_columnconfigure(0, weight=1)
     content.grid_rowconfigure(1, weight=1)

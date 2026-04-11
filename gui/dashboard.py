@@ -1,8 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from utility import clear_window
 from modules import dashboard_service
-from tkinter import messagebox, ttk
+from tkinter import messagebox
 
 
 
@@ -71,11 +71,14 @@ def dashboard_page(window):
     clear_window.clear_main(window)
     window.configure(bg="white")
 
-    window.grid_columnconfigure(0, weight=1)
+    page = tk.Frame(window, bg="white")
+    page.pack(fill="both", expand=True)
+
+    page.grid_columnconfigure(0, weight=1)
 
     # Dashboard title
     title = tk.Label(
-        window,
+        page,
         text="DASHBOARD",
         font=("Arial", 24, "bold"),
         bg="white",
@@ -83,10 +86,10 @@ def dashboard_page(window):
     )
     title.grid(row=0, column=0, sticky="ew")
 
-    ttk.Separator(window, orient="horizontal").grid(row=1, column=0, sticky="ew", padx=20)
+    ttk.Separator(page, orient="horizontal").grid(row=1, column=0, sticky="ew", padx=20)
 
     # Top metric cards
-    cards_frame = tk.Frame(window, bg="white")
+    cards_frame = tk.Frame(page, bg="white")
     cards_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=16)
 
     cards_frame.grid_columnconfigure(0, weight=1)
@@ -124,7 +127,7 @@ def dashboard_page(window):
 
     # Recent sales section
     recent_sales_title = tk.Label(
-        window,
+        page,
         text="Recent Sales",
         font=("Arial", 14, "bold"),
         bg="white",
@@ -132,9 +135,9 @@ def dashboard_page(window):
     )
     recent_sales_title.grid(row=3, column=0, sticky="ew")
 
-    ttk.Separator(window, orient="horizontal").grid(row=4, column=0, sticky="ew", padx=20)
+    ttk.Separator(page, orient="horizontal").grid(row=4, column=0, sticky="ew", padx=20)
 
-    table_frame = tk.Frame(window, bg="white")
+    table_frame = tk.Frame(page, bg="white")
     table_frame.grid(row=5, column=0, sticky="nsew", padx=20, pady=(10, 20))
 
     columns = ("date", "product", "qty", "total")
@@ -153,6 +156,6 @@ def dashboard_page(window):
     sales_table.insert("", "end", values=("...", "...", "...", "..."))
     sales_table.pack(fill="both", expand=True)
 
-    window.grid_rowconfigure(5, weight=1)
+    page.grid_rowconfigure(5, weight=1)
 
     update_recent_sales_table(sales_table)
