@@ -99,7 +99,7 @@ def dashboard_page(window):
         ("Total Products", str(show_total_products())),
         ("Total Stock", str(show_total_stock())),
         ("Low Stock Items", str(show_low_stock_items_count())+" !"),
-        ("Total Revenue", str(show_total_revenue())+" RS"),
+        ("Total Revenue", str(show_total_revenue())+" PKR"),
     ]
 
     for index, (label_text, value_text) in enumerate(cards):
