@@ -60,6 +60,7 @@ def report_page(window):
         bg="white",
     ).grid(row=0, column=0, sticky="w", pady=(0, 8))
 
+
     table_container = tk.Frame(table_section, bg="white")
     table_container.grid(row=1, column=0, sticky="nsew")
     table_container.grid_columnconfigure(0, weight=1)
