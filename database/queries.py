@@ -103,6 +103,8 @@ def get_all_transactions_in_order(cursor):
     """)
     return cursor.fetchall()
 
+
+
 def get_number_of_products(cursor):
     cursor.execute("""
     SELECT COUNT(*) FROM product 
@@ -121,6 +123,14 @@ def get_low_stock_count(cursor,threshold=10):
     """,(threshold,))
 
     return cursor.fetchone()
+
+def get_low_stock_records(cursor,threshold=10):
+    cursor.execute("""
+    SELECT * FROM product
+    WHERE COALESCE(quantity,0) < %s    
+    """,(threshold,))
+
+    return cursor.fetchall()
 
 def get_total_revenue(cursor):
     cursor.execute("""

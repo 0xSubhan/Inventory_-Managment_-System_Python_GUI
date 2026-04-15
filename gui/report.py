@@ -1,7 +1,70 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from gui import dashboard
+from modules import sale_service
+from tkinter import messagebox, ttk
+from modules import report_service
 from utility import clear_window
+
+selected_report_type = "sales"
+
+def empty_report_table(report_table):
+    for row in report_table.get_children():
+        report_table.delete(row)
+
+def set_active_button(clicked_button,report_buttons):
+    for btn in report_buttons:
+        btn.config(state="normal")
+
+    clicked_button.config(state="disabled")
+
+def handle_sales_report(result_table,clicked_button,report_buttons):
+    # First Empty the table:
+    empty_report_table(result_table)
+
+    global selected_report_type
+    selected_report_type = "sales"
+
+    set_active_button(clicked_button,report_buttons)
+
+    # Now we need to show all sales report !
+    transactions = sale_service.fetch_all_transactions()
+    print(transactions)
+
+    if transactions["ok"]:
+        for transaction in transactions["result"]:
+            result_table.insert("","end",values=transaction)
+    else:
+        messagebox.showwarning("Warning","No Sales Record At the moment !")
+        return print("No Sales Record!")
+
+def handle_lowstock_report(result_table,clicked_button,report_buttons):
+    # First Empty the table:
+    empty_report_table(result_table)
+
+    global selected_report_type
+    selected_report_type = "lowstock"
+
+    set_active_button(clicked_button,report_buttons)
+
+    low_stock_records = report_service.fetch_low_stock_records()
+
+    if low_stock_records["ok"]:
+        for record in low_stock_records["result"]:
+            result_table.insert("","end",values=record)
+    else:
+        messagebox.showwarning("Warning",low_stock_records["message"])
+        return
+
+
+def handle_top_product_report(result_table,clicked_button,report_buttons):
+    # First Empty the table:
+    empty_report_table(result_table)
+
+    global selected_report_type
+    selected_report_type = "topproduct"
+
+    set_active_button(clicked_button,report_buttons)
 
 
 def report_page(window):
@@ -12,7 +75,7 @@ def report_page(window):
     page.pack(fill="both", expand=True)
 
     page.grid_columnconfigure(0, weight=1)
-    page.grid_rowconfigure(4, weight=1)
+    page.grid_rowconfigure(5, weight=1)
 
     # Header
     tk.Label(
@@ -41,15 +104,20 @@ def report_page(window):
     actions_frame = tk.Frame(page, bg="white")
     actions_frame.grid(row=3, column=0, sticky="w", pady=(0, 12))
 
-    tk.Button(actions_frame, text="Sales Report", width=14).pack(side="left", padx=(0, 8))
-    tk.Button(actions_frame, text="Low Stock", width=14).pack(side="left", padx=(0, 8))
-    tk.Button(actions_frame, text="Top Products", width=14).pack(side="left")
+    sale_btn = tk.Button(actions_frame, text="Sales Report", width=14,command=lambda : handle_sales_report(result_table,sale_btn,report_buttons))
+    sale_btn.pack(side="left", padx=(0, 8))
+    low_stock_btn = tk.Button(actions_frame, text="Low Stock", width=14,command=lambda : handle_lowstock_report(result_table,low_stock_btn,report_buttons))
+    low_stock_btn.pack(side="left", padx=(0, 8))
+    top_product_btn = tk.Button(actions_frame, text="Top Products", width=14,command=lambda : handle_top_product_report(result_table,top_product_btn,report_buttons))
+    top_product_btn.pack(side="left")
+
+    report_buttons = (sale_btn,low_stock_btn,top_product_btn)
 
     ttk.Separator(page, orient="horizontal").grid(row=4, column=0, sticky="new")
 
     # Result table section
     table_section = tk.Frame(page, bg="white")
-    table_section.grid(row=4, column=0, sticky="nsew", pady=(10, 10))
+    table_section.grid(row=5, column=0, sticky="nsew", pady=(10, 10))
     table_section.grid_columnconfigure(0, weight=1)
     table_section.grid_rowconfigure(1, weight=1)
 
@@ -66,15 +134,17 @@ def report_page(window):
     table_container.grid_columnconfigure(0, weight=1)
     table_container.grid_rowconfigure(0, weight=1)
 
-    columns = ("date", "product", "qty", "price", "total")
+    columns = ("saleid","date", "product", "qty", "price", "total")
     result_table = ttk.Treeview(table_container, columns=columns, show="headings", height=10)
 
+    result_table.heading("saleid", text="SaleID")
     result_table.heading("date", text="Date")
     result_table.heading("product", text="Product")
     result_table.heading("qty", text="Qty")
     result_table.heading("price", text="Price")
     result_table.heading("total", text="Total")
 
+    result_table.column("saleid", width=140, anchor="center")
     result_table.column("date", width=140, anchor="center")
     result_table.column("product", width=220, anchor="center")
     result_table.column("qty", width=90, anchor="center")
@@ -87,9 +157,7 @@ def report_page(window):
     result_table.grid(row=0, column=0, sticky="nsew")
     y_scroll.grid(row=0, column=1, sticky="ns")
 
-    result_table.insert("", "end", values=("...", "...", "...", "...", "..."))
-
-    ttk.Separator(page, orient="horizontal").grid(row=5, column=0, sticky="ew", pady=(0, 10))
+    ttk.Separator(page, orient="horizontal").grid(row=6, column=0, sticky="ew", pady=(0, 10))
 
     # Footer
     tk.Label(
@@ -98,4 +166,4 @@ def report_page(window):
         font=("Arial", 12, "bold"),
         bg="white",
         anchor="w",
-    ).grid(row=6, column=0, sticky="ew")
+    ).grid(row=7, column=0, sticky="ew")
