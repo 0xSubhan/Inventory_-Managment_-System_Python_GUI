@@ -124,13 +124,6 @@ def get_low_stock_count(cursor,threshold=10):
 
     return cursor.fetchone()
 
-def get_low_stock_records(cursor,threshold=10):
-    cursor.execute("""
-    SELECT * FROM product
-    WHERE COALESCE(quantity,0) < %s    
-    """,(threshold,))
-
-    return cursor.fetchall()
 
 def get_total_revenue(cursor):
     cursor.execute("""
@@ -153,3 +146,4 @@ def get_recent_sales(cursor):
     """,(5,))
 
     return cursor.fetchall()
+

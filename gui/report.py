@@ -65,6 +65,15 @@ def handle_top_product_report(result_table,clicked_button,report_buttons):
     selected_report_type = "topproduct"
 
     set_active_button(clicked_button,report_buttons)
+    top_products = report_service.fetch_top_products()
+
+    if top_products["ok"]:
+        for record in top_products["result"]:
+            result_table.insert("","end",values=record)
+    else:
+        messagebox.showwarning("Warning",top_products["message"])
+        return  
+
 
 
 def report_page(window):
