@@ -103,6 +103,22 @@ def get_all_transactions_in_order(cursor):
     """)
     return cursor.fetchall()
 
+def get_transactions_by_date_range(cursor,from_date,to_date):
+    cursor.execute("""
+    SELECT
+        s.sale_id,
+        s.sale_date,
+        p.name,
+        s.quantity,
+        s.sale_price,
+        s.total_price
+    FROM sales s
+    JOIN product p ON p.productid = s.productid
+    WHERE s.sale_date::date BETWEEN %s AND %s
+    ORDER BY s.sale_date ASC,s.sale_id ASC
+    """,(from_date,to_date))
+    return cursor.fetchall()
+
 
 
 def get_number_of_products(cursor):
@@ -147,3 +163,60 @@ def get_recent_sales(cursor):
 
     return cursor.fetchall()
 
+def get_low_stock_products(cursor,threshold=10):
+    cursor.execute("""
+    SELECT
+        p.productid,
+        p.name,
+        p.category,
+        COALESCE(p.quantity,0) AS quantity,
+        p.price,
+        'LOW' AS stock_level
+    FROM product p
+    WHERE COALESCE(p.quantity,0) < %s
+    ORDER BY quantity ASC,p.name ASC
+    """,(threshold,))
+
+    return cursor.fetchall()
+
+def get_top_five_products(cursor,limit=5):
+    cursor.execute("""
+    SELECT
+        ROW_NUMBER() OVER (
+            ORDER BY SUM(s.quantity) DESC,SUM(s.total_price) DESC,p.name ASC
+        ) AS rank,
+        p.name,
+        p.category,
+        SUM(s.quantity) AS units_sold,
+        SUM(s.total_price) AS total_revenue,
+        COALESCE(p.quantity,0) AS current_stock
+    FROM sales s
+    JOIN product p ON p.productid = s.productid
+    GROUP BY p.productid,p.name,p.category,p.quantity
+    ORDER BY units_sold DESC,total_revenue DESC,p.name ASC
+    LIMIT %s
+    """,(limit,))
+
+    return cursor.fetchall()
+
+def get_top_five_products_by_date_range(cursor,from_date,to_date,limit=5):
+    cursor.execute("""
+    SELECT
+        ROW_NUMBER() OVER (
+            ORDER BY SUM(s.quantity) DESC,SUM(s.total_price) DESC,p.name ASC
+        ) AS rank,
+        p.name,
+        p.category,
+        SUM(s.quantity) AS units_sold,
+        SUM(s.total_price) AS total_revenue,
+        COALESCE(p.quantity,0) AS current_stock
+    FROM sales s
+    JOIN product p ON p.productid = s.productid
+    WHERE s.sale_date::date BETWEEN %s AND %s
+    GROUP BY p.productid,p.name,p.category,p.quantity
+    ORDER BY units_sold DESC,total_revenue DESC,p.name ASC
+    LIMIT %s
+    """,(from_date,to_date,limit))
+
+    return cursor.fetchall()
+ 
