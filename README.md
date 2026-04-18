@@ -1,4 +1,4 @@
-# Inventory Management System (Python GUI + PostgreSQL)
+# Inventory Management System (Python GUI + PostgreSQL + 3 Tier Architecture)
 
 A desktop Inventory Management System built with **Python Tkinter** and **PostgreSQL**.  
 It helps you manage products, stock, sales, and reports in a single GUI app.
