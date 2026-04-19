@@ -53,6 +53,7 @@ This application provides:
 │   └── queries.py            # Central SQL query functions
 └── utility/
     └── clear_window.py       # Reusable UI clear helper
+    
 ```
 
 ## How to run
