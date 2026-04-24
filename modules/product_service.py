@@ -51,7 +51,7 @@ def fetch_products():
 def search_product(product_name):
     connection = config.get_db_connection()
     if connection is None:
-        print("Database connection failed !") # Test Case
+        print("Database connection failed !") # Test Case # need to handle this !
         return
     cursor = connection.cursor()
     try:
