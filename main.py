@@ -14,7 +14,7 @@ root.minsize(900, 600)
 # SideBar Window Frame
 side_frame = tk.Frame(root, bg="lightgray")
 side_frame.pack(side="left", fill="y")  # fill vertical space
-# Force sidebar width
+# Force sidewbar width
 side_frame.config(width=200)
 side_frame.pack_propagate(False)  # prevent shrinking to fit content
 

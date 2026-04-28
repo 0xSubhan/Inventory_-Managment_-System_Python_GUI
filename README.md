@@ -124,6 +124,20 @@ CREATE TABLE IF NOT EXISTS sales (
 python main.py
 ```
 
+### 6. Run test cases
+
+All automated tests are in the separate `tests/` folder.
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Or use the runner script:
+
+```bash
+python run_tests.py
+```
+
 ## How to use the app
 
 ### Dashboard
