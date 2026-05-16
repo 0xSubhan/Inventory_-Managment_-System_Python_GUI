@@ -3,7 +3,14 @@ from database import config
 
 def get_product_by_name(cursor,name):
     cursor.execute("""
-    SELECT * FROM product 
+    SELECT
+       productid,
+       name,
+       category,
+       price,                                                
+       quantity,
+       to_char(added_at::timestamp(0),'YYYY-MM-DD || HH12:MI:SS AM')
+    FROM product 
     WHERE name = %s        
     """,(name,))
 
@@ -99,7 +106,7 @@ def get_all_transactions_in_order(cursor):
     cursor.execute("""
     SELECT 
         s.sale_id,
-        s.sale_date,
+        to_char(s.sale_date::timestamp(0),'YYYY-MM-DD || HH12:MI:SS AM'),
         p.name,
         s.quantity,
         s.sale_price,
