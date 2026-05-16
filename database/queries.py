@@ -151,7 +151,7 @@ def get_total_revenue(cursor):
 def get_recent_sales(cursor):
     cursor.execute("""
     SELECT 
-        s.sale_date,
+        to_char(s.sale_date::timestamp(0),'YYYY-MM-DD || HH12:MI:SS AM'),
         p.name,
         s.quantity,
         s.total_price
