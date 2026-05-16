@@ -187,7 +187,7 @@ def product_page(window):
     table_container = tk.Frame(table_card, bg="white")
     table_container.pack(fill="both", expand=True)
 
-    columns = ("id","name", "category", "price", "quantity","status")
+    columns = ("id","name", "category", "price", "quantity","date")
     product_table = ttk.Treeview(table_container, columns=columns, show="headings")
 
     product_table.heading("id", text="ID")
@@ -195,7 +195,7 @@ def product_page(window):
     product_table.heading("category", text="Category")
     product_table.heading("price", text="Price")
     product_table.heading("quantity", text="Quantity")
-    product_table.heading("status", text="Status")
+    product_table.heading("date", text="Added_At")
 
 
     product_table.column("id", width=100, anchor="w")
@@ -203,7 +203,7 @@ def product_page(window):
     product_table.column("category", width=140, anchor="w")
     product_table.column("price", width=100, anchor="center")
     product_table.column("quantity", width=100, anchor="center")
-    product_table.column("status", width=100, anchor="center")
+    product_table.column("date", width=100, anchor="center")
 
 
     y_scroll = ttk.Scrollbar(table_container, orient="vertical", command=product_table.yview)

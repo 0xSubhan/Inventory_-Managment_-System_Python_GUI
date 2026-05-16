@@ -17,7 +17,14 @@ def insert_product(cursor,d_name,d_category,d_price,d_quantity):
 
 def get_all_products(cursor):
     cursor.execute("""
-    SELECT * FROM product 
+    SELECT 
+       productid,
+       name,
+       category,
+       price,                                                
+       quantity,
+       to_char(added_at::timestamp(0),'YYYY-MM-DD || HH12:MI:SS AM')
+    FROM product 
     ORDER BY productid ASC   
     """)
     return cursor.fetchall()
