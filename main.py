@@ -1,9 +1,13 @@
 import tkinter as tk
+from database import migrate
 from gui import dashboard
 from gui import product
 from gui import report
 from gui import sale
 from gui import stock
+
+
+migrate.run_migration()
 
 # Root Window
 root = tk.Tk()

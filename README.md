@@ -85,9 +85,15 @@ DB_PASSWORD=your_password
 DB_PORT=5432
 ```
 
-### 4. Create required tables
+### 4. Create the database and required tables
 
-Run these SQL statements in your PostgreSQL database:
+Run the migration script. It will create the `inventory_system` database if it does not already exist, then create the required tables:
+
+```bash
+python -m database.migrate
+```
+
+If you prefer to create the objects manually, these are the SQL statements used by the migration:
 
 ```sql
 CREATE TABLE IF NOT EXISTS product (
@@ -119,6 +125,8 @@ CREATE TABLE IF NOT EXISTS sales (
 ```
 
 ### 5. Start the application
+
+The app will bootstrap the `inventory_system` database and required tables on launch if they are missing.
 
 ```bash
 python main.py

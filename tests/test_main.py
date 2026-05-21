@@ -18,6 +18,7 @@ class _FakeWidget:
 
 
 class TestMain(unittest.TestCase):
+    @patch("database.migrate.run_migration")
     @patch("gui.stock.stock_page")
     @patch("gui.sale.sale_page")
     @patch("gui.report.report_page")
@@ -36,6 +37,7 @@ class TestMain(unittest.TestCase):
         _mock_report,
         _mock_sale,
         _mock_stock,
+        _mock_migration,
     ):
         root = MagicMock()
         mock_tk.return_value = root
