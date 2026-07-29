@@ -41,6 +41,50 @@ This application provides:
 - **DB Driver:** `psycopg2`
 - **Environment config:** `python-dotenv`
 
+## Docker
+
+This project can run in Docker, but because it is a Tkinter desktop app it still needs access to a graphical display.
+
+On Linux, the simplest setup is to use the provided `docker-compose.yml`, which starts both PostgreSQL and the GUI container.
+
+### 1. Build and start
+
+Make sure `database/.env` exists first, then run:
+
+```bash
+docker compose up --build
+```
+
+### 2. Allow the container to use your display
+
+Before starting the app on Linux, allow local Docker containers to connect to your X server:
+
+```bash
+xhost +local:
+```
+
+If you want a tighter rule, use:
+
+```bash
+xhost +si:localuser:$(whoami)
+```
+
+### 3. Stop the stack
+
+```bash
+docker compose down
+```
+
+The compose file mounts `/tmp/.X11-unix` and forwards `DISPLAY`, so the GUI opens on your desktop while PostgreSQL runs in a separate container.
+
+If you want to build just the application image without Compose, use:
+
+```bash
+docker build -t inventory-system .
+```
+
+Then run it against a PostgreSQL server that is reachable from the container.
+
 ## Project structure
 
 ```text

@@ -19,7 +19,7 @@ def get_product_by_name(cursor,name):
 def insert_product(cursor,d_name,d_category,d_price,d_quantity):
 
         cursor.execute("""
-        INSERT INTO product (name,category,price,quantity) VALUES (%s,%s,%s,%s)
+        INSERT INTO product (name,category,price,quantity) VALUES (LOWER(%s),LOWER(%s),%s,%s)
         """,(d_name,d_category,d_price,d_quantity))
 
 def get_all_products(cursor):

@@ -282,7 +282,7 @@ def report_page(window):
     # Footer
     tk.Label(
         page,
-        text="Total Revenue: " + str(dashboard.show_total_revenue()) + " PKR",
+        text="Total Revenue: " + str(dashboard.show_total_revenue()) + " $",
         font=("Arial", 12, "bold"),
         bg="white",
         anchor="w",
