@@ -53,6 +53,30 @@ def handle_stock_search(entry_obj,stock_table,threshold=10):
         clear_search_field(entry_obj)
         refresh_stock_table(stock_table)
 
+# Handling Search By Category:
+def show_records_byCategory(category_records,stock_table,threshold=10):
+    empty_stock_table(stock_table)
+
+    for record in category_records:
+        print(record)
+        productid, name, category, price, quantity, _ = record
+        stock_lvl = "HIGH" if quantity >= threshold else "LOW"
+            
+        stock_table.insert("","end",values=(productid,name,category,price,quantity,stock_lvl))
+
+
+
+def handle_searchByCategory(entry_obj,stock_table):     
+    category = entry_obj.get().strip().lower()
+    category_records = stock_service.fetch_records_byCategory(category)   
+    if category_records:
+        show_records_byCategory(category_records,stock_table)   
+        clear_search_field(entry_obj)
+    else:
+        messagebox.showwarning("Search","No Record Found")
+        clear_search_field(entry_obj)
+        refresh_stock_table(stock_table)
+
 
 def stock_page(window):
     clear_window.clear_main(window)
@@ -110,8 +134,23 @@ def stock_page(window):
         padx=16,
         command=lambda: refresh_stock_table(stock_table),
     )
-    refresh_btn.grid(row=1, column=2, sticky="w")
+    refresh_btn.grid(row=1, column=3, sticky="w")
     refresh_btn.grid_columnconfigure(0, weight=1)
+
+    # -------------------------------- Search by category Button:
+    searchByCategory_btn = tk.Button(
+        search_card,
+        text="Search By Category",
+        bg="#2f6fed",
+        fg="white",
+        relief="flat",
+        padx=16,
+        command=lambda: handle_searchByCategory(search_entry,stock_table),
+    )
+    searchByCategory_btn.grid(row=1, column=2, sticky="w")
+    search_card.grid_columnconfigure(0, weight=1)    
+
+    # --------------------------------
 
     body = tk.Frame(content, bg="#f4f6fb")
     body.pack(fill="both", expand=True)

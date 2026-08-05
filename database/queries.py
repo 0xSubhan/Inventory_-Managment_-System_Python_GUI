@@ -235,4 +235,22 @@ def get_top_five_products_by_date_range(cursor,from_date,to_date,limit=5):
     return cursor.fetchall()
  
 
- 
+#  fetch_records_byCategory will call this query
+
+def get_records_byCategory(cursor,category):
+    cursor.execute("""
+    SELECT
+       productid,
+       name,
+       category,
+       price,                                                
+       quantity,
+       to_char(added_at::timestamp(0),'YYYY-MM-DD || HH12:MI:SS AM')
+    FROM product 
+    WHERE category = %s        
+         
+""",(category,))
+
+    return cursor.fetchall() 
+
+# -----------------------

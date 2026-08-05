@@ -1,6 +1,10 @@
 from database import queries , config
 from modules import product_service
 
+# Need to handle db connection failure, or maybe not because i think it check's it when program start at dashboard , need to check it !
+
+# There is an isssue with name duplication , some name have duplicates that shouldnt happen fix that, before remove duplicate name from the database !
+
 def apply_stock_change(productID,quantity,movement_type): # This function maybe can be used in sales too ???
     # first fill the movement table by query
     connection = config.get_db_connection()
@@ -34,6 +38,23 @@ def fetch_productID(product_Name):
     finally:
         cursor.close()
         connection.close()
+
+# -------- Search by category   
+
+def fetch_records_byCategory(category):
+    connection = config.get_db_connection() 
+    if connection is None:
+        return
+    cursor = connection.cursor()
+    try:
+        records = queries.get_records_byCategory(cursor,category)
+        return records
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# --------
 
 def handle_fetch_products() -> list:
     connection = config.get_db_connection()
