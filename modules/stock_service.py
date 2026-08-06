@@ -3,7 +3,8 @@ from modules import product_service
 
 # Need to handle db connection failure, or maybe not because i think it check's it when program start at dashboard , need to check it !
 
-# There is an isssue with name duplication , some name have duplicates that shouldnt happen fix that, before remove duplicate name from the database !
+# There is an isssue with name duplication , some name have duplicates that shouldnt happen fix that, before remove duplicate name from the database ! (Solved it -- Added unique constaint to the name attribute but before that ran a sql query to delete already existed duplicate names ! ) 
+ 
 
 def apply_stock_change(productID,quantity,movement_type): # This function maybe can be used in sales too ???
     # first fill the movement table by query
@@ -25,6 +26,7 @@ def apply_stock_change(productID,quantity,movement_type): # This function maybe 
     finally:
         cursor.close()
         connection.close()
+        
 
 def fetch_productID(product_Name):
     connection = config.get_db_connection()
