@@ -6,6 +6,8 @@ from modules import product_service
 # There is an isssue with name duplication , some name have duplicates that shouldnt happen fix that, before remove duplicate name from the database ! (Solved it -- Added unique constaint to the name attribute but before that ran a sql query to delete already existed duplicate names ! ) 
  
 
+# There should be a functionality in the searching where we can enter id of product to search it !
+
 def apply_stock_change(productID,quantity,movement_type): # This function maybe can be used in sales too ???
     # first fill the movement table by query
     connection = config.get_db_connection()
